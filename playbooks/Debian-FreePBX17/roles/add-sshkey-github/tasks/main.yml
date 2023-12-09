@@ -1,0 +1,13 @@
+# roles/common/tasks/add_ssh_key.yml
+
+- name: Fetch SSH public keys from GitHub
+  shell: "curl -s https://github.com/{{ github_username }}.keys"
+  register: github_keys
+  when: developer | default(false)
+
+- name: Ensure GitHub SSH keys are present in authorized_keys
+  authorized_key:
+    user: root
+    key: "{{ item }}"
+  with_items: "{{ github_keys.stdout_lines }}"
+  when: github_keys.stdout_lines | length > 0 and developer | default(false)

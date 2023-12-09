@@ -1,0 +1,37 @@
+---
+- name: Set upload_max_filesize in php.ini
+  replace:
+    path: /etc/php/8.2/apache2/php.ini
+    regexp: '^(upload_max_filesize = ).*'
+    replace: '\120M'
+
+- name: Set memory_limit in php.ini
+  replace:
+    path: /etc/php/8.2/apache2/php.ini
+    regexp: '^(memory_limit = ).*'
+    replace: '\1256M'
+
+- name: Set User and Group in apache2.conf
+  replace:
+    path: /etc/apache2/apache2.conf
+    regexp: '^(User|Group).*$'
+    replace: '\1 asterisk'
+
+- name: AllowOverride All in apache2.conf
+  replace:
+    path: /etc/apache2/apache2.conf
+    regexp: 'AllowOverride None'
+    replace: 'AllowOverride All'
+
+- name: Enable mod_rewrite in Apache
+  command: a2enmod rewrite
+
+- name: Restart Apache service
+  systemd:
+    name: apache2
+    state: restarted
+
+- name: Remove default index.html
+  file:
+    path: /var/www/html/index.html
+    state: absent

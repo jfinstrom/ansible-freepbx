@@ -1,0 +1,11 @@
+# roles/common/tasks/configure_git.yml
+
+- name: Configure global Git settings
+  git_config:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    scope: global
+  loop:
+    - { key: "user.name", value: "{{ git_user_name }}" }
+    - { key: "user.email", value: "{{ git_user_email }}" }
+  when: developer | default(false)

@@ -1,0 +1,75 @@
+---
+
+- name: Create group for Asterisk
+  group:
+    name: asterisk
+
+- name: Create system user for Asterisk
+  user:
+    name: asterisk
+    comment: Asterisk System User
+    home: /var/lib/asterisk
+    group: asterisk
+    system: yes
+
+- name: Add user to additional groups
+  user:
+    name: asterisk
+    groups: audio,dialout
+
+- name: Set ownership for /etc/asterisk
+  file:
+    path: /etc/asterisk
+    owner: asterisk
+    group: asterisk
+    recurse: yes
+
+- name: Set ownership for /var/{lib,log,spool}/asterisk
+  file:
+    path: "{{ item }}"
+    owner: asterisk
+    group: asterisk
+    recurse: yes
+  loop:
+    - /var/lib/asterisk
+    - /var/log/asterisk
+    - /var/spool/asterisk
+
+- name: Set ownership for /usr/lib64/asterisk
+  file:
+    path: /usr/lib64/asterisk
+    owner: asterisk
+    group: asterisk
+    recurse: yes
+
+- name: Update /etc/default/asterisk - AST_USER
+  lineinfile:
+    path: /etc/default/asterisk
+    regexp: '^#AST_USER'
+    line: 'AST_USER="asterisk"'
+
+- name: Update /etc/default/asterisk - AST_GROUP
+  lineinfile:
+    path: /etc/default/asterisk
+    regexp: '^#AST_GROUP'
+    line: 'AST_GROUP="asterisk"'
+
+- name: Uncomment runuser in /etc/asterisk/asterisk.conf
+  replace:
+    path: /etc/asterisk/asterisk.conf
+    regexp: '^;runuser'
+    replace: 'runuser'
+
+- name: Uncomment rungroup in /etc/asterisk/asterisk.conf
+  replace:
+    path: /etc/asterisk/asterisk.conf
+    regexp: '^;rungroup'
+    replace: 'rungroup'
+
+- name: Add /usr/lib64 to ld.so.conf.d
+  lineinfile:
+    path: /etc/ld.so.conf.d/x86_64-linux-gnu.conf
+    line: '/usr/lib64'
+
+- name: Run ldconfig
+  command: ldconfig

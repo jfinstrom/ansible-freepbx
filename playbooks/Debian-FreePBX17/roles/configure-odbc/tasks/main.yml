@@ -1,0 +1,22 @@
+---
+- name: Create /etc/odbcinst.ini
+  blockinfile:
+    path: /etc/odbcinst.ini
+    block: |
+      [MySQL]
+      Description = ODBC for MySQL (MariaDB)
+      Driver = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so
+      FileUsage = 1
+
+- name: Create /etc/odbc.ini
+  blockinfile:
+    path: /etc/odbc.ini
+    block: |
+      [MySQL-asteriskcdrdb]
+      Description = MySQL connection to 'asteriskcdrdb' database
+      Driver = MySQL
+      Server = localhost
+      Database = asteriskcdrdb
+      Port = 3306
+      Socket = /var/run/mysqld/mysqld.sock
+      Option = 3

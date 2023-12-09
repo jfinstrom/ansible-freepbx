@@ -1,0 +1,3 @@
+inventory/servers
+playbooks/Debian-FreePBX17/vars/user_info.yml
+ansible.cfg

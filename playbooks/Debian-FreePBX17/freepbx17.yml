@@ -1,0 +1,19 @@
+---
+- name: Install FreePBX 17 on Debian
+  hosts: freepbx17
+  become: yes
+  become_user: root
+  vars_files:
+      - ./vars/versions.yml
+      - ./vars/user_info.yml
+  roles:
+      - set-dns
+      - package-install
+      - asterisk-install
+      - create-asterisk-user
+      - configure-apache
+      - configure-odbc
+      - install-freepbx-ui
+      - add-service
+      - add-sshkey-github
+      - configure-git

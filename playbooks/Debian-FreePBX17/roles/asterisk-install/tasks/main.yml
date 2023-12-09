@@ -1,0 +1,66 @@
+- name: Create directory for Asterisk installation
+  file:
+    path: /usr/src
+    state: directory
+
+- name: Check if Asterisk is already installed
+  stat:
+    path: /usr/src/asterisk-{{ asterisk_version }}
+  register: asterisk_installed
+
+- name: Check if Asterisk version matches
+  shell: asterisk -V | grep -oP 'Asterisk \K[0-9]+\.[0-9]+\.[0-9]+'
+  register: current_asterisk_version
+  changed_when: false
+
+- name: Download Asterisk source tarball if not installed
+  get_url:
+    url: http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-{{ asterisk_version }}.tar.gz
+    dest: /usr/src/asterisk-{{ asterisk_version }}.tar.gz
+  when: not asterisk_installed.stat.exists
+
+- name: Extract Asterisk source if not installed
+  unarchive:
+    src: /usr/src/asterisk-{{ asterisk_version }}.tar.gz
+    dest: /usr/src
+    remote_src: yes
+  when: not asterisk_installed.stat.exists
+
+- name: Configure Asterisk if not installed or version mismatch
+  command: |
+    ./configure --libdir=/usr/lib64 --with-pjproject-bundled --with-jansson-bundled
+  args:
+    chdir: /usr/src/asterisk-{{ asterisk_version }}
+  when: not asterisk_installed.stat.exists or asterisk_version != current_asterisk_version.stdout
+
+- name: Build Asterisk if not installed or version mismatch
+  command: make
+  args:
+    chdir: /usr/src/asterisk-{{ asterisk_version }}
+  when: not asterisk_installed.stat.exists or asterisk_version != current_asterisk_version.stdout
+
+- name: Install Asterisk if not installed or version mismatch
+  command: make install
+  args:
+    chdir: /usr/src/asterisk-{{ asterisk_version }}
+  become: yes
+  when: not asterisk_installed.stat.exists or asterisk_version != current_asterisk_version.stdout
+
+- name: Install Asterisk sample files
+  command: make samples
+  args:
+    chdir: /usr/src/asterisk-{{ asterisk_version }}
+  become: yes
+  when: not asterisk_installed.stat.exists or asterisk_version != current_asterisk_version.stdout
+
+- name: Install Asterisk configuration files
+  command: make config
+  args:
+    chdir: /usr/src/asterisk-{{ asterisk_version }}
+  become: yes
+  when: not asterisk_installed.stat.exists or asterisk_version != current_asterisk_version.stdout
+
+- name: Configure shared libraries
+  command: ldconfig
+  become: yes
+  when: not asterisk_installed.stat.exists or asterisk_version != current_asterisk_version.stdout

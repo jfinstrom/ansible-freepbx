@@ -1,0 +1,27 @@
+---
+- name: Create FreePBX systemd service file
+  blockinfile:
+    path: /etc/systemd/system/freepbx.service
+    create: yes
+    block: |
+      [Unit]
+      Description=FreePBX VoIP Server
+      After=mariadb.service
+      
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/sbin/fwconsole start -q
+      ExecStop=/usr/sbin/fwconsole stop -q
+      
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd after changing service files
+  systemd:
+    daemon_reload: yes
+
+- name: Enable FreePBX systemd service
+  systemd:
+    name: freepbx
+    enabled: yes

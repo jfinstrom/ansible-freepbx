@@ -1,0 +1,114 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade packages
+  apt:
+    upgrade: yes
+
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apache2
+    - automake
+    - bash
+    - binutils-dev
+    - bison
+    - build-essential
+    - bzip2
+    - curl
+    - default-libmysqlclient-dev
+    - doxygen
+    - expect
+    - ffmpeg
+    - flex
+    - freetds-dev
+    - gcc
+    - g++
+    - git
+    - graphviz
+    - htop
+    - iptables
+    - ipset
+    - lame
+    - libasound2-dev
+    - libbluetooth-dev
+    - libcap-dev
+    - libcfg-dev
+    - libcodec2-dev
+    - libcorosync-common-dev
+    - libc-client2007e-dev
+    - libcpg-dev
+    - libcurl4-openssl-dev
+    - libc6-dev
+    - libedit-dev
+    - libfftw3-dev
+    - libgsm1-dev
+    - libgmime-3.0-dev
+    - libical-dev
+    - libiksemel-dev
+    - libjack-jackd2-dev
+    - libjansson-dev
+    - libldap2-dev
+    - libncurses5-dev
+    - libneon27-dev
+    - libnewt-dev
+    - libogg-dev
+    - libssl-dev
+    - libpopt-dev
+    - libpq-dev
+    - libradcli-dev
+    - libresample1-dev
+    - libsnmp-dev
+    - libsndfile1-dev
+    - libspandsp-dev
+    - libsqlite3-dev
+    - libsrtp2-dev
+    - libssl-dev
+    - libtool
+    - libtool-bin
+    - liburiparser-dev
+    - libvorbis-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - linux-headers-{{ ansible_kernel }}
+    - make
+    - mariadb-client
+    - mariadb-server
+    - mpg123
+    - nodejs
+    - npm
+    - odbc-mariadb
+    - openssh-server
+    - patch
+    - php8.2
+    - php8.2-cli
+    - php8.2-common
+    - php8.2-curl
+    - php8.2-gd
+    - php8.2-intl
+    - php8.2-mbstring
+    - php8.2-mysql
+    - php8.2-xml
+    - php-pear
+    - php-soap
+    - pkg-config
+    - portaudio19-dev
+    - python-dev-is-python3
+    - sngrep
+    - sox
+    - software-properties-common
+    - sqlite3
+    - subversion
+    - sudo
+    - ubuntu-dev-tools
+    - unixodbc
+    - unixodbc-dev
+    - uuid
+    - uuid-dev
+    - vim
+    - wget
+    - xmlstarlet
+    - zlib1g-dev

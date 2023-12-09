@@ -1,0 +1,10 @@
+---
+- name: Create resolv.conf file
+  copy:
+    dest: /etc/resolv.conf
+    content: |
+      nameserver 1.1.1.1
+      nameserver 1.1.1.2
+    owner: root
+    group: root
+    mode: '0644'

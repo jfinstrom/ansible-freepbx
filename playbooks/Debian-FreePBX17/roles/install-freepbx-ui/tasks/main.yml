@@ -1,0 +1,63 @@
+---
+- name: Create directory for FreePBX installation
+  file:
+    path: /usr/local/src
+    state: directory
+
+- name: Download FreePBX tarball
+  get_url:
+    url: http://mirror.freepbx.org/modules/packages/freepbx/freepbx-17.0-latest-EDGE.tgz
+    dest: /usr/src/freepbx-17.0-latest-EDGE.tgz
+
+- name: Extract FreePBX tarball
+  unarchive:
+    src: /usr/src/freepbx-17.0-latest-EDGE.tgz
+    dest: /usr/src
+    remote_src: yes
+
+- name: Start Asterisk for FreePBX
+  command: ./start_asterisk start
+  args:
+    chdir: /usr/src/freepbx/
+
+- name: Install FreePBX
+  shell: ./install -n
+  args:
+    chdir: /usr/src/freepbx/
+  register: install_result
+  ignore_errors: yes
+  changed_when: false
+  no_log: true
+
+- name: Check installation status # this all seems a bit silly but install will return 1 even if it succeeds
+  shell: fwconsole -V
+  args:
+    executable: /bin/bash
+  register: fwconsole_result
+  changed_when: false
+  ignore_errors: true
+
+- name: Print installation status
+  debug:
+    msg: "Installation successful"
+  when:  fwconsole_result.rc == 0
+
+- name: Fail if installation failed
+  fail:
+    msg: "Installation failed"
+  when: fwconsole_result.rc != 0
+
+- name: Install FreePBX modules
+  command: fwconsole ma installall
+  args:
+    chdir: /usr/src/freepbx/
+
+- name: Reload FreePBX
+  command: fwconsole reload
+  args:
+    chdir: /usr/src/freepbx/
+
+- name: Restart FreePBX
+  command: fwconsole restart
+  args:
+    chdir: /usr/src/freepbx/
